@@ -11,34 +11,34 @@ api = '7783483077:AAHzY1BOlciBVZn47bkB8ypltBNBauBCmhw'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
-kb = ReplyKeyboardMarkup(resize_keyboard=True)
+menu = ReplyKeyboardMarkup(resize_keyboard=True)
 button1 = KeyboardButton(text='Рассчитать')
 button2 = KeyboardButton(text='Информация')
 button3 = KeyboardButton(text='Купить')
-kb.add(button1, button2, button3)
+menu.add(button1, button2, button3)
 
-Inkb2 = InlineKeyboardMarkup()
+Line_menu2 = InlineKeyboardMarkup()
 button4 = InlineKeyboardButton(text="Product1", callback_data="product_buying")
 button5 = InlineKeyboardButton(text="Product2", callback_data="product_buying")
 button6 = InlineKeyboardButton(text="Product3", callback_data="product_buying")
 button7 = InlineKeyboardButton(text="Product4", callback_data="product_buying")
-Inkb2.add(button4, button5, button6, button7)
+Line_menu2.add(button4, button5, button6, button7)
 
-Inkb = InlineKeyboardMarkup()
+Line_menu = InlineKeyboardMarkup()
 button8 = InlineKeyboardButton(text='Рассчитать норму калорий', callback_data='calories')
 button9 = InlineKeyboardButton(text='Формулы расчёта', callback_data='formulas')
-Inkb.add(button8, button9)
+Line_menu.add(button8, button9)
 
 
 @dp.message_handler(commands=['start'])
 async def start(message):
     print('Привет! Я бот помогающий твоему здоровью.')
-    await message.answer('Привет! Я бот помогающий твоему здоровью.', reply_markup=kb)
+    await message.answer('Привет! Я бот помогающий твоему здоровью.', reply_markup=menu)
 
 
 @dp.message_handler(text='Рассчитать')
 async def main_menu(message):
-    await message.answer('Выберите опцию:', reply_markup=Inkb)
+    await message.answer('Выберите опцию:', reply_markup=Line_menu)
 
 
 @dp.message_handler(text="Купить")
@@ -46,15 +46,13 @@ async def get_buying_list(message):
     products = get_all_products()
     number = 1
     for product in products:
-        title = product[1]
-        description = product[2]
-        price = product[3]
+        title, description,price = product
         await message.answer(f'Название: {title} | Описание: {description} | Цена: {price}')
-        picture = f'picture/vit_{product[0]}.jpg'
+        picture = f'picture/vit_{product[number]}.jpg'
         with open(picture, 'rb') as img:
             await message.answer_photo(img)
             number += 1
-    await message.answer("Выберите продукт для покупки:", reply_markup=Inkb2)
+    await message.answer("Выберите продукт для покупки:", reply_markup=Line_menu2)
 
 
 @dp.callback_query_handler(text='product_buying')
